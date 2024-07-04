@@ -1,9 +1,36 @@
+import 'package:assignment_2/theme/theme_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class SignIn extends StatelessWidget {
+class SignIn extends StatefulWidget {
+  final VoidCallback toggleTheme;
+
+  SignIn({required this.toggleTheme});
+
+  @override
+  _SignInState createState() => _SignInState();
+}
+
+class _SignInState extends State<SignIn> {
+  final _auth = FirebaseAuth.instance;
+  late String email;
+  late String password;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Sign In'),
+        leading: IconButton(
+          icon: Icon(Icons.lightbulb_outline),
+          onPressed: (){
+            Provider.of<ThemeProvider>(context,listen: false).toggleTheme();
+          }
+          ,
+        ),
+      ),
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -11,8 +38,7 @@ class SignIn extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                  height: 20), // Space between tab bar and "Welcome Back" text
+              SizedBox(height: 20),
               Text(
                 'Welcome Back',
                 style: TextStyle(
@@ -28,9 +54,7 @@ class SignIn extends StatelessWidget {
                   color: Colors.black54,
                 ),
               ),
-              SizedBox(
-                  height:
-                      30), // Space between the text and the first input field
+              SizedBox(height: 30),
               Container(
                 height: 60,
                 decoration: BoxDecoration(
@@ -39,6 +63,11 @@ class SignIn extends StatelessWidget {
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 30),
                 child: TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  textAlign: TextAlign.center,
+                  onChanged: (value) {
+                    email = value;
+                  },
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Username',
@@ -50,7 +79,7 @@ class SignIn extends StatelessWidget {
                     ),
                   ),
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ),
@@ -63,6 +92,10 @@ class SignIn extends StatelessWidget {
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 30),
                 child: TextField(
+                  textAlign: TextAlign.center,
+                  onChanged: (value) {
+                    password = value;
+                  },
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Password',
@@ -75,31 +108,39 @@ class SignIn extends StatelessWidget {
                   ),
                   obscureText: true,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
               ),
               SizedBox(height: 20),
               Container(
-                height: 60,
+                height: 40,
                 decoration: BoxDecoration(
                   color: Colors.deepPurple,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 30),
-                child: TextField(
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Login',
-                    hintStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: TextStyle(
-                    color: Colors.white,
+                child: MaterialButton(
+                  onPressed: () async {
+                    try {
+                      final newUser = await _auth.signInWithEmailAndPassword(
+                          email: email, password: password);
+
+                      if (newUser != null) {
+                        Navigator.pushNamed(context, '/calculator');
+                      }
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                  minWidth: 500.0,
+                  height: 40,
+                  child: Text(
+                    'Log In',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white),
                   ),
                 ),
               ),
@@ -122,7 +163,7 @@ class SignIn extends StatelessWidget {
                     child: Text(
                       'Dont have an account?',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(

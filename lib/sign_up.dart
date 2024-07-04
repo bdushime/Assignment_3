@@ -1,13 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatelessWidget {
+  final _auth = FirebaseAuth.instance;
+  late String email;
+  late String password;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white10,
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 40),
-        child: Center(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -35,6 +40,9 @@ class SignUp extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: TextField(
+                  onChanged: (value) {
+                    // handle username change
+                  },
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Username',
@@ -55,6 +63,9 @@ class SignUp extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: TextField(
+                  onChanged: (value) {
+                    email = value;
+                  },
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Email',
@@ -76,6 +87,9 @@ class SignUp extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: TextField(
+                  onChanged: (value) {
+                    password = value;
+                  },
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Password',
@@ -98,6 +112,9 @@ class SignUp extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: TextField(
+                  onChanged: (value) {
+                    // handle confirm password change
+                  },
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Confirm Password',
@@ -118,15 +135,23 @@ class SignUp extends StatelessWidget {
                     color: Colors.deepPurple,
                     borderRadius: BorderRadius.circular(20)),
                 padding: EdgeInsets.symmetric(horizontal: 10),
-                child: TextField(
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Sign up',
-                      hintStyle: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white)),
+                child: MaterialButton(
+                  onPressed: () async {
+                    print(email);
+                    print(password);
+                    try {
+                      final newUser = await _auth.createUserWithEmailAndPassword(
+                          email: email, password: password);
+                      if (newUser != null) {
+                        Navigator.pushNamed(context, '/calculator');
+                      }
+                    } catch (e) {
+                      print(e);
+                    }
+                  },
+                  minWidth: 500.0,
+                  height: 42.0,
+                  child: Text('Sign up'),
                 ),
               ),
               Text(
@@ -146,16 +171,11 @@ class SignUp extends StatelessWidget {
                     color: Color(0xFFF0E4F2),
                     borderRadius: BorderRadius.circular(20)),
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: TextField(
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Sign In with Google',
-                    hintStyle: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple),
-                  ),
+                child: MaterialButton(
+                  onPressed: () {},
+                  minWidth: 500.0,
+                  height: 42.0,
+                  child: Text('Sign In With Google'),
                 ),
               ),
               SizedBox(

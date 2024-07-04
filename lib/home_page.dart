@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
       body: currentPage == 'Sign Up'
           ? SignUp()
           : currentPage == 'Sign In'
-              ? SignIn()
+              ? SignIn(toggleTheme: () {  },)
               : Calculator(),
     );
   }
